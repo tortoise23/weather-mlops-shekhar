@@ -3,4 +3,3 @@ __pycache__/
 *.pyc
 *.joblib
 .DS_Store
-evaluation/metrics.json
