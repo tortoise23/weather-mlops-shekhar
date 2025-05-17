@@ -1,0 +1,7 @@
+[core]
+    remote = origin_remote
+['remote "origin_remote"']
+    url = https://dagshub.com/tortoise23/weather_MLOPs_repo.dvc
+    auth = basic
+    user = tortoise23
+    password = 0cce119179a141f7d6de142d9a04a8f56706cf4c
