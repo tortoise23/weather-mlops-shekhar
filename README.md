@@ -20,6 +20,11 @@ project_mlops/
 
 ## How to use?
 ```bash
+### 0. initialization
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+dvc pull
 
 ### 1. Preprocess and Split
 python3 src/split_data.py
@@ -38,5 +43,7 @@ phython3 src/model.py
 mlflow ui
 # open http://localhost:5000
 
-### gihub: https://github.com/tortoise23/weather-mlops-shekhar
-### dagshub: https://dagshub.com/tortoise23/weather-mlops-shekhar
+### github_shekhar: https://github.com/tortoise23/weather-mlops-shekhar
+### github_forked: https://github.com/tortoise23/weather_MLOPs_repo
+### dagshub_shekhar: https://dagshub.com/tortoise23/weather-mlops-shekhar
+### dagshub_forked: https://dagshub.com/tortoise23/weather_MLOPs_repo
