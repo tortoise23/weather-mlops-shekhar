@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 *.joblib
 .DS_Store
+mlruns/
+weather_MLOPs_repo/
