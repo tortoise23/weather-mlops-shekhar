@@ -16,6 +16,8 @@ project_mlops/
 ├── .gitignore # Git ignore rules
 ├── .dvcignore # DVC ignore rules
 ├── README.md # Project documentation
+├── requirements.txt # Python dependencies
+└── venv/ # Virtual environment (Git ignored)
 ---
 
 ## How to use?
@@ -47,3 +49,9 @@ mlflow ui
 ### github_forked: https://github.com/tortoise23/weather_MLOPs_repo
 ### dagshub_shekhar: https://dagshub.com/tortoise23/weather-mlops-shekhar
 ### dagshub_forked: https://dagshub.com/tortoise23/weather_MLOPs_repo
+
+modified:   README.md
+renamed:    src/split_data.py -> src/data_prep_service.py
+renamed:    src/model.py -> src/train_service.py
+renamed:    src/predict.py -> src/predict_service.py
+new file:   src/orchestration_script.py
