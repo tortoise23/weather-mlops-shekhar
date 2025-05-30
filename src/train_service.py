@@ -10,6 +10,9 @@ def train_and_save_model():
     X_train = pd.read_csv("data/X_train.csv")
     y_train = pd.read_csv("data/y_train.csv")
 
+    if mlflow.active_run():
+        mlflow.end_run()
+
     # Train model with MLflow tracking
     with mlflow.start_run():
         
