@@ -17,5 +17,5 @@ def test_model_training():
 
     print("test_model_training passed.")
 
-if __name__ == "__main__":
-    test_model_training()
+
+test_model_training()
