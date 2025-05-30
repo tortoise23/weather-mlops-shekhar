@@ -4,7 +4,7 @@ import sys
 import os
 # Append the absolute path of the src folder
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-from model import train_and_save_model
+from src.train_service import train_and_save_model
 
 
 def test_model_training():
