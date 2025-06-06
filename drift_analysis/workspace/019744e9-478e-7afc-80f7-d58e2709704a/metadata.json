@@ -1,0 +1,17 @@
+{
+  "id": "019744e9-478e-7afc-80f7-d58e2709704a",
+  "name": "2008 Monthly Drift Analysis of weather Data",
+  "description": null,
+  "dashboard": {
+    "name": "2008 Monthly Drift Analysis of weather Data",
+    "panels": [],
+    "tabs": [],
+    "tab_id_to_panel_ids": {}
+  },
+  "team_id": null,
+  "org_id": null,
+  "date_from": null,
+  "date_to": null,
+  "created_at": "2025-06-06T11:03:48.366361",
+  "version": "1"
+}

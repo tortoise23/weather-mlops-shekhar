@@ -1,0 +1,17 @@
+{
+  "id": "019744ff-3664-7ab0-8f9c-4c5fcf145110",
+  "name": "Yearly Drift Analysis of weather Data",
+  "description": null,
+  "dashboard": {
+    "name": "Yearly Drift Analysis of weather Data",
+    "panels": [],
+    "tabs": [],
+    "tab_id_to_panel_ids": {}
+  },
+  "team_id": null,
+  "org_id": null,
+  "date_from": null,
+  "date_to": null,
+  "created_at": "2025-06-06T11:27:45.765047",
+  "version": "1"
+}

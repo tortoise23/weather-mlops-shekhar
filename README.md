@@ -7,10 +7,27 @@ This project predicts, whether it will rain tomorrow or not in Australia.
 ## File Tree
 project_mlops/
 │
-├── data/ # contains raw data and training and test data in CSV file format. raw data is dvc tracked
+├── .env/ #folder for Airflow
+├── dags/ # mlops_pipeline_dag.py for orchestration using Airflow
+├── data/ # contains raw data and training and test data in CSV file format. raw data (dvc tracked)
+├── drift_analysis/ # Studying monthly and yearly data drift 
+│   ├── venv # Python virtual environment
+│   ├── workspace # Evidently UI workspace 
+│   ├── monthly_drift.py # stduies monthly drift in year 2008 with reference data January 2008
+│   ├── yearly_drift.py # Studies yearly drift from year 2009 to 2016 with refernce data 2008
+│   ├── yearly_drift_3.py # Studies yearly drift from year 2011 to 2016 with three years refernce data 2008, 2009, and 2010 
 ├── evaluation/ # contains evaluation metrics (metrics.json) and evaluation python script
-├── models/ # Trained model saved as joblib file, which is dvc tracked
-├── src/ # Contains scripts for data preprocessing, data preparation for model, and model
+├── models/ # Trained model saved as joblib file (dvc tracked)
+├── logs/ # Contains log files for Airflow
+├── mlruns/ # Contains logging from MLflow (git ignored)
+├── plugins/ # Folder for Airflow
+├── src/ #  Data processing, training, and prediction scripts 
+│   ├── preprocessing.py
+│   ├── data_prep_service.py
+│   ├── train_service.py
+│   ├── predict_service.py
+│   ├── services.py #called by dag/mlops_pipeline_dag.py
+│   └── orchestration_script.py           
 ├── tests/ # Unit tests for training and prediction
 ├── .dvc/ # DVC config files
 ├── .gitignore # Git ignore rules
@@ -47,41 +64,6 @@ mlflow ui
 
 ```
 
-modified:   README.md
-renamed:    src/split_data.py -> src/data_prep_service.py
-renamed:    src/model.py -> src/train_service.py
-renamed:    src/predict.py -> src/predict_service.py
-new file:   src/orchestration_script.py
-
-In Airflow orchestration, we dropped MLflow routines, as it was very resource consuming. See src/services.py
-
-# New Tree
-## File Tree
-project_mlops/
-│
-├── .env/ #folder for Airflow
-├── dags/ # mlops_pipeline_dag.py for orchestration using Airflow
-├── data/ # contains raw data and training and test data in CSV file format. raw data (dvc tracked)
-├── evaluation/ # contains evaluation metrics (metrics.json) and evaluation python script
-├── models/ # Trained model saved as joblib file (dvc tracked)
-├── logs/ # Contains log files for Airflow
-├── mlruns/ # Contains logging from MLflow (git ignored)
-├── plugins/ # Folder for Airflow
-├── src/ #  Data processing, training, and prediction scripts 
-│   ├── preprocessing.py
-│   ├── data_prep_service.py
-│   ├── train_service.py
-│   ├── predict_service.py
-│   ├── services.py #called by dag/mlops_pipeline_dag.py
-│   └── orchestration_script.py           
-├── tests/ # Unit tests for training and prediction
-├── .dvc/ # DVC config files
-├── .gitignore # Git ignore rules
-├── .dvcignore # DVC ignore rules
-├── README.md # Project documentation
-├── requirements.txt # Python dependencies
-└── venv/ # Virtual environment (Git ignored)
-
 ## Airflow launch instruction
 ```bash
 docker-compose up airflow-init # only for the first launch
@@ -94,6 +76,20 @@ docker ps
 
 docker-compose down # to stop the Airflow docker.
 ```
+## Evidently launch instruction
+``` bash
+cd project_mlops/drift_analysis/
+virtualenv venv # do this only the first time
+source venv/bin/activate
+pip install "evidently==0.6.7" # do it only the first time
+pip install xgboost # do it only the first time
+python monthly_drift.py
+python yearly_drift.py
+python yearly_drift_3.py
+evidently ui --workspace ./workspace/ # after executing this open http://127.0.0.1:8000/
+
+```
+
 ### Repo links
 ### github_shekhar: https://github.com/tortoise23/weather-mlops-shekhar
 ### github_forked: https://github.com/tortoise23/weather_MLOPs_repo
