@@ -8,9 +8,9 @@ import io
 import json
 import os, sys
 import xgboost as xgb
-import joblib
 
 from sklearn import datasets, ensemble, model_selection
+from sklearn.preprocessing import LabelEncoder
 from scipy.stats import anderson_ksamp
 
 from evidently.metric_preset import DataDriftPreset, ClassificationPreset
@@ -34,60 +34,57 @@ def load_data():
     # Drop rows with missing target
     df.dropna(subset=['RainTomorrow'], inplace=True)
     return df
-df= load_data()
-#print(df.head())
 
-def get_month_data(df, month):
-    df1 = df[(df['Date'].dt.year == 2008) & (df['Date'].dt.month == month)]
-    return df1
-
-def clean_data(df1):
+def clean_data():
     # Fill selected columns (optional)
-    df1['Rainfall'].fillna(0, inplace=True)
-    df1['Evaporation'].fillna(df1['Evaporation'].median(), inplace=True)
-    df1['Sunshine'].fillna(df1['Sunshine'].median(), inplace=True)
+    df = load_data()
+    df['Rainfall'].fillna(0, inplace=True)
+    df['Evaporation'].fillna(df['Evaporation'].median(), inplace=True)
+    df['Sunshine'].fillna(df['Sunshine'].median(), inplace=True)
 
     # Extract features from date
-    df1['Date'] = pd.to_datetime(df1['Date'])
-    df1['Month'] = df1['Date'].dt.month
-    df1['Year'] = df1['Date'].dt.year
-    df1.drop(columns=['Date'], inplace=True)
-
+    df['Date'] = pd.to_datetime(df['Date'])
+    df['Month'] = df['Date'].dt.month
+    df['Year'] = df['Date'].dt.year
+    df1 = df.copy()
+    df.drop(columns=['Date'], inplace=True)
     # Encode target
-    df1['RainTomorrow'] = df1['RainTomorrow'].map({'Yes': 1, 'No': 0})
+    df['RainTomorrow'] = df['RainTomorrow'].map({'Yes': 1, 'No': 0})
+    return df#, df1
+
+def encode_categoricals():
+    #df, df1 = clean_data()
+    df = clean_data()
+    for col in df.select_dtypes(include='object').columns:
+        df[col] = df[col].fillna("Missing")
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
+    #df['Date'] = df1['Date']
+    return df
+
+def get_month_data(month):
+    df = encode_categoricals()
+    #df1 = df[(df['Date'].dt.year == 2008) & (df['Date'].dt.month == month)]
+    #df1.drop(columns=['Date'], inplace=True)
+    df1 = df[(df['Month'] == month) & (df['Year'] == 2008)]
     return df1
 
-def encode_categoricals(df1):
-    from sklearn.preprocessing import LabelEncoder
-    label_encoders = {}
-    for col in df1.select_dtypes(include='object').columns:
-        df1[col] = df1[col].fillna("Missing")
-        le = LabelEncoder()
-        df1[col] = le.fit_transform(df1[col].astype(str))
-        label_encoders[col] = le
-    return df1, label_encoders
 
 def reference_data():
-    df_ref = get_month_data(df, 1)  # January data
-    df_ref = clean_data(df_ref)
-    df_ref, _ = encode_categoricals(df_ref)
+    df_ref = get_month_data(1)  # January data
     X = df_ref.drop(columns=['RainTomorrow'])
     y = df_ref['RainTomorrow']
 
     target = 'RainTomorrow'
-    numerical_features = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
     categorical_features = [
-        col for col in df.select_dtypes(include=['object', 'category', 'bool']).columns
-        if col != target
-    ]
+        col for col in X.select_dtypes(include=['object', 'category', 'bool']).columns.tolist()]
     return X, y, numerical_features, categorical_features
 
 numerical_features, categorical_features = reference_data()[2:4]
 
 def current_data(month):
-    df_current = get_month_data(df, month)  
-    df_current = clean_data(df_current)
-    df_current, _ = encode_categoricals(df_current)
+    df_current = get_month_data(month)  
     X = df_current.drop(columns=['RainTomorrow'])
     y = df_current['RainTomorrow']
     return X, y
@@ -95,7 +92,6 @@ def current_data(month):
 def model_training():
     # Reference and current data split
     X_train, X_test, y_train, y_test = model_selection.train_test_split(reference_data()[0],reference_data()[1],test_size=0.2, random_state=42)
-
     # Model training
     classifier = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss',max_depth=6,learning_rate=0.1,n_estimators=100)
     classifier.fit(X_train, y_train)

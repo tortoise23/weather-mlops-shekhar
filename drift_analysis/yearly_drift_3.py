@@ -62,6 +62,11 @@ def encode_categoricals():
     #df['Date'] = df1['Date']
     return df
 
+def get_year_data_ref():
+    df = encode_categoricals()
+    df1 = df[(df['Year'] == 2008) | (df['Year'] == 2009) | (df['Year'] == 2010)]  # Reference year data
+    return df1
+
 def get_year_data(year):
     df = encode_categoricals()
     df1 = df[df['Year'] == year]
@@ -69,7 +74,7 @@ def get_year_data(year):
 
 
 def reference_data():
-    df_ref = get_year_data(2008)  # Reference year data
+    df_ref = get_year_data_ref()  # Reference year data
     X = df_ref.drop(columns=['RainTomorrow'])
     y = df_ref['RainTomorrow']
 
@@ -212,7 +217,7 @@ def add_report(workspace, project_name, project_description, report):
 
 if __name__ == "__main__":
     WORKSPACE_NAME = "workspace"
-    PROJECT_NAME = "Yearly Drift Analysis of weather Data"
+    PROJECT_NAME = "Yearly Drift Analysis of weather Data_with 3 years training"
     PROJECT_DESCRIPTION = "Evidently Dashboards"
 
     # Prepare reference data only once
@@ -233,7 +238,7 @@ if __name__ == "__main__":
     add_report(workspace, PROJECT_NAME, PROJECT_DESCRIPTION, prod_model_drift_report)
 
     # Yearly reports
-    for year in np.arange(2009,2017,1):  # From 2009 to 2016
+    for year in np.arange(2011,2017,1):  # From 2011 to 2016
         model_drift_report_year = prod_model_drift_month(classifier, year)
         add_report(workspace, PROJECT_NAME, PROJECT_DESCRIPTION, model_drift_report_year)
 
