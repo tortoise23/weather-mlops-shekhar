@@ -66,6 +66,7 @@ mlflow ui
 
 ## Airflow launch instruction
 ```bash
+chmod -R 777 dags data logs models plugins src # only first time
 docker-compose up airflow-init # only for the first launch
 docker-compose up -d
 # wait for all worker and scheduler becoming healthy. Keep checking staus
