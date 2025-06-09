@@ -8,7 +8,7 @@ __pycache__/
 mlruns/
 .cache/
 .mlflow/
-weather_MLOPs_repo/
+drift_analysis/workspace/
 
 logs/
 dags/__pycache__/

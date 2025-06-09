@@ -33,11 +33,18 @@ def load_data():
     df = df.sort_values("Date")
     # Drop rows with missing target
     df.dropna(subset=['RainTomorrow'], inplace=True)
-    return df
+    target = 'RainTomorrow'
+    numerical_features = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    categorical_features = [
+        col for col in df.select_dtypes(include=['object', 'category', 'bool']).columns.tolist()
+        if col != target
+    ]
+    return df, numerical_features, categorical_features
+numerical_features, categorical_features = load_data()[1:3]
 
 def clean_data():
     # Fill selected columns (optional)
-    df = load_data()
+    df, _, _ = load_data()
     df['Rainfall'].fillna(0, inplace=True)
     df['Evaporation'].fillna(df['Evaporation'].median(), inplace=True)
     df['Sunshine'].fillna(df['Sunshine'].median(), inplace=True)
@@ -77,14 +84,7 @@ def reference_data():
     df_ref = get_year_data_ref()  # Reference year data
     X = df_ref.drop(columns=['RainTomorrow'])
     y = df_ref['RainTomorrow']
-
-    target = 'RainTomorrow'
-    numerical_features = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
-    categorical_features = [
-        col for col in X.select_dtypes(include=['object', 'category', 'bool']).columns.tolist()]
-    return X, y, numerical_features, categorical_features
-
-numerical_features, categorical_features = reference_data()[2:4]
+    return X, y
 
 def current_data(year):
     df_current = get_year_data(year)
@@ -155,7 +155,7 @@ def prod_model_drift_month(classifier,year):
     column_mapping.numerical_features = numerical_features
     column_mapping.categorical_features = categorical_features
 
-    X_ref, y_ref, _, _ = reference_data()
+    X_ref, y_ref = reference_data()
     ref_data = X_ref.copy()
     ref_data["target"] = y_ref
     ref_data["prediction"] = classifier.predict(X_ref)
@@ -181,7 +181,7 @@ def target_drift(year):
     column_mapping_drift.numerical_features = numerical_features
     column_mapping_drift.categorical_features = []
 
-    X_ref, y_ref, _, _ = reference_data()
+    X_ref, y_ref = reference_data()
     ref_data = X_ref.copy()
     ref_data["target"] = y_ref
 
@@ -221,8 +221,8 @@ if __name__ == "__main__":
     PROJECT_DESCRIPTION = "Evidently Dashboards"
 
     # Prepare reference data only once
-    X_ref, y_ref, _, _ = reference_data()
-    
+    X_ref, y_ref = reference_data()
+
     # Train model
     X_train, X_test, y_train, y_test, classifier = model_training()
 

@@ -11,8 +11,8 @@ project_mlops/
 ├── dags/ # mlops_pipeline_dag.py for orchestration using Airflow
 ├── data/ # contains raw data and training and test data in CSV file format. raw data (dvc tracked)
 ├── drift_analysis/ # Studying monthly and yearly data drift 
-│   ├── venv # Python virtual environment
-│   ├── workspace # Evidently UI workspace 
+│   ├── venv # Python virtual environment (git ignored)
+│   ├── workspace # Evidently UI workspace (git ignored)
 │   ├── monthly_drift.py # stduies monthly drift in year 2008 with reference data January 2008
 │   ├── yearly_drift.py # Studies yearly drift from year 2009 to 2016 with refernce data 2008
 │   ├── yearly_drift_3.py # Studies yearly drift from year 2011 to 2016 with three years refernce data 2008, 2009, and 2010 
